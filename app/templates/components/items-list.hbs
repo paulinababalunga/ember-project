@@ -1,0 +1,15 @@
+<div class="item-container">
+  <h1>{{title}}</h1>
+  {{#each items as | item |}}
+    <article class="item-list-container">
+      <a {{action 'toggleImageSize'}} class="image-container {{if isWide "wide"}}">
+        <img src="{{item.image}}" alt="">
+      </a>
+      <div class="detail-section">
+        <h4 class="detail-title" {{action "showItems" item.title}}>Title: {{item.title}}</h4>
+        <div class="detail-author"> Author: {{item.author}}</div>
+        <div>Type: {{item-property-type item.type}} - {{item.type}}</div>
+      </div>
+    </article>
+  {{/each}}
+</div>

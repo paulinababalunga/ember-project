@@ -1,0 +1,57 @@
+.app-container {
+  nav {
+    background-color: #3f51b5;
+    padding: 10px 20px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+
+    ul {
+      list-style-type: none;
+      font-size: 20px;
+      display: flex;
+    }
+
+    li {
+      margin-right: 20px;
+      cursor: pointer;
+
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+body {
+  margin: 0;
+  background-color: white;
+}
+
+.body {
+  margin-top: 60px;
+  padding: 20px 40px;
+}
+
+.item-list-container {
+  background-color: #cccccc;
+  padding: 10px;
+  margin: 10px 0;
+  display: flex;
+}
+
+.about-container {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.image-container {
+  img {
+    height: 150px;
+    width: 100px;
+  }
+  margin-right: 20px;
+}
+
+
