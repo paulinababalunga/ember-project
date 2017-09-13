@@ -1,2 +1,5 @@
-{{items-list title="List of books" items = model}}
-{{outlet}}
+{{#list-filter filter=(action 'filterByTitle') as | items|}}
+  <div class="results">
+    {{items-list title = title items = model}}
+  </div>
+{{/list-filter}}

@@ -1,0 +1,15 @@
+<article class="item-list-container">
+  <a {{action 'toggleImageSize'}} class="image {{if isWide "wide"}}">
+    <img src="{{image}}" alt="">
+  </a>
+  <div class="detail-section">
+    <h4 class="detail-title" {{action "showItems" title}}>Title: {{title}}</h4>
+    <div class="detail-author {{authorVisibility}}"><strong>Author: </strong>{{author}}</div>
+    <div><strong>Type:</strong> {{item-property-type type}} - {{type}}</div>
+    {{input type="text" value = title key-up=(action 'updateTitle') }}
+  </div>{{ item.id}}
+  {{button-with-confirmation text="Click ok to delete an item" onConfirm=(action "deleteBookItem" item)}}
+  <div class="">
+    <button>{{#link-to 'book.edit' item.id}}Edit {{title}}{{/link-to}}</button>
+  </div>
+</article>
