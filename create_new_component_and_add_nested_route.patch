@@ -1,0 +1,694 @@
+Index: app/templates/application.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/application.hbs	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/templates/application.hbs	(revision )
+@@ -3,6 +3,7 @@
+     <ul>
+       <li>{{#link-to 'book'}}Books{{/link-to}}</li>
+       <li>{{#link-to 'movie'}}Movies{{/link-to}}</li>
++      <li>{{#link-to 'production'}}Production{{/link-to}}</li>
+       <li>{{#link-to 'contact'}}Contact{{/link-to}}</li>
+       <li>{{#link-to 'about'}}About{{/link-to}}</li>
+     </ul>
+Index: app/styles/app.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/styles/app.scss	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/styles/app.scss	(revision )
+@@ -70,6 +70,19 @@
+ }
+ 
+ 
++table, td, th {
++  border: 1px solid black;
++}
++
++table {
++  border-collapse: collapse;
++  width: 100%;
++}
++
++th {
++  height: 50px;
++}
++
+ .loader {
+   color: #ffffff;
+   font-size: 90px;
+Index: app/routes/book/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/routes/book/index.js	(revision )
++++ app/routes/book/index.js	(revision )
+@@ -0,0 +1,5 @@
++import Ember from 'ember';
++
++export default Ember.Route.extend({
++
++});
+Index: tests/unit/routes/book/index-test.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tests/unit/routes/book/index-test.js	(revision )
++++ tests/unit/routes/book/index-test.js	(revision )
+@@ -0,0 +1,11 @@
++import { moduleFor, test } from 'ember-qunit';
++
++moduleFor('route:book/index', 'Unit | Route | book/index', {
++  // Specify the other units that are required for this test.
++  // needs: ['controller:foo']
++});
++
++test('it exists', function(assert) {
++  let route = this.subject();
++  assert.ok(route);
++});
+Index: app/templates/components/edit-component.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/components/edit-component.hbs	(revision )
++++ app/templates/components/edit-component.hbs	(revision )
+@@ -0,0 +1,7 @@
++<fieldset>
++  {{item.id}}
++  <p>{{input value=item.title}}</p>
++  <p>{{input value=item.author}}</p>
++  <p>{{input value=item.price}}</p>
++  <span {{action 'edit'}}>Save</span>
++</fieldset>
+\ No newline at end of file
+Index: app/models/production.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/models/production.js	(revision )
++++ app/models/production.js	(revision )
+@@ -0,0 +1,6 @@
++import DS from 'ember-data';
++
++export default DS.Model.extend({
++  name:DS.attr("string"),
++  price: DS.attr('number')
++});
+Index: app/components/edit-component.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/components/edit-component.js	(revision )
++++ app/components/edit-component.js	(revision )
+@@ -0,0 +1,10 @@
++import Ember from 'ember';
++
++export default Ember.Component.extend({
++  editing: false,
++  actions: {
++    edit(){
++      this.set('editing', true);
++    }
++  }
++});
+Index: tests/integration/components/edit-component-test.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tests/integration/components/edit-component-test.js	(revision )
++++ tests/integration/components/edit-component-test.js	(revision )
+@@ -0,0 +1,24 @@
++import { moduleForComponent, test } from 'ember-qunit';
++import hbs from 'htmlbars-inline-precompile';
++
++moduleForComponent('edit-component', 'Integration | Component | edit component', {
++  integration: true
++});
++
++test('it renders', function(assert) {
++  // Set any properties with this.set('myProperty', 'value');
++  // Handle any actions with this.on('myAction', function(val) { ... });
++
++  this.render(hbs`{{edit-component}}`);
++
++  assert.equal(this.$().text().trim(), '');
++
++  // Template block usage:
++  this.render(hbs`
++    {{#edit-component}}
++      template block text
++    {{/edit-component}}
++  `);
++
++  assert.equal(this.$().text().trim(), 'template block text');
++});
+Index: app/components/item-component.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/components/item-component.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/components/item-component.js	(revision )
+@@ -8,6 +8,8 @@
+   // classNameBindings: ['item.author::displayNone'],
+   item: null, //this comes from outside
+   author: null,
++  price: null,
++  isEditing: false,
+ 
+   authorVisibility: Ember.computed("author", function() {
+     if (this.get("author")) {
+@@ -16,6 +18,13 @@
+     return "displayNone";
+   }),
+ 
++  priceVisibility: Ember.computed("price", function(){
++    if(this.get("price")) {
++      return ""
++    }
++    return "displayNone"
++  }),
++
+   actions: {
+     showItems(item) {
+       alert(item);
+@@ -23,21 +32,24 @@
+     toggleImageSize() {
+       this.toggleProperty('isWide');
+     },
+-    updateTitle: function (items) {
+-      this.set("title", this.get('title'));
+-      // let val = Ember.get(items, 'title');
+-      // console.log(val);
+-      // this.set(items, 'title', items);
+-      let val = Ember.get(items, 'title');
+-      console.log(val);
+-      // Ember.set(this.get('items').objectAt(items),'title',value)
+-      // val.save();
++    updateTitle: function () {
++      this.set("item.title", this.get('item.title'));
+     },
++
+ 
+     deleteBookItem(itemId) {
+-      // this.get('itemsService').remove(item);
++      //let values  = this.get('items')
++      //this.get('itemsService').remove(item);
+       // let foundIndex = this.get('item').findIndex((el)=> el.id === itemId);
+       // this.get('item').splice(foundIndex, 1);
++
++     let  items = [{name:"Kriss", age: 23}, {name: "Anne", age: 14}];
++     items.some(item=>{
++       if(item.name === "Anne"){
++         items.splice(items.indexOf(item), 1)
++       }
++     });
++      console.log(items)
+     }
+   }
+ });
+Index: app/models/book.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/models/book.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/models/book.js	(revision )
+@@ -4,5 +4,6 @@
+   title: DS.attr('string'),
+   author: DS.attr('string'),
+   image: DS.attr('string'),
+-  type: DS.attr('string')
++  type: DS.attr('string'),
++  price: DS.attr('number')
+ });
+Index: app/routes/book/edit.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/routes/book/edit.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/routes/book/edit.js	(revision )
+@@ -2,6 +2,6 @@
+ 
+ export default Ember.Route.extend({
+   model(params){
+-    return this.modelFor('book').findBy('id', parseInt(params.id));
++    return this.modelFor('book').findBy('id', params.id);
+   }
+ });
+Index: app/templates/book/index.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/book/index.hbs	(revision )
++++ app/templates/book/index.hbs	(revision )
+@@ -0,0 +1,0 @@
+Index: app/templates/components/item-component.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/components/item-component.hbs	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/templates/components/item-component.hbs	(revision )
+@@ -5,11 +5,13 @@
+   <div class="detail-section">
+     <h4 class="detail-title" {{action "showItems" title}}>Title: {{title}}</h4>
+     <div class="detail-author {{authorVisibility}}"><strong>Author: </strong>{{author}}</div>
++    <div class="detail-price {{priceVisibility}}"><strong>Price: </strong>{{price}}$</div>
+     <div><strong>Type:</strong> {{item-property-type type}} - {{type}}</div>
+     {{input type="text" value = title key-up=(action 'updateTitle') }}
+   </div>{{ item.id}}
+   {{button-with-confirmation text="Click ok to delete an item" onConfirm=(action "deleteBookItem" item)}}
+   <div class="">
+-    <button>{{#link-to 'book.edit' item.id}}Edit {{title}}{{/link-to}}</button>
++    <button>{{#link-to 'book.edit' item.id}}Edit Item {{/link-to}}</button>
++    <button>{{#link-to 'about'}}Go to About Page {{/link-to}}</button>
+   </div>
+-</article>
++</article>
+\ No newline at end of file
+Index: app/templates/book/edit.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/book/edit.hbs	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/templates/book/edit.hbs	(revision )
+@@ -1,9 +1,1 @@
+-
+-<ul class="errors">
+-  <li>error</li>
+-</ul>
+-<fieldset>
+-  {{input name="item.name" value="item.name"}}
+-  {{input name="item.author" value="item.author"}}
+-  <p>hello</p>
+-</fieldset>
+\ No newline at end of file
++{{edit-component item = model}}
+\ No newline at end of file
+Index: app/components/table-production.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/components/table-production.js	(revision )
++++ app/components/table-production.js	(revision )
+@@ -0,0 +1,11 @@
++import Ember from 'ember';
++
++export default Ember.Component.extend({
++  product:null,
++  tagName: 'table',
++  className: 'table',
++
++  productList: Ember.computed('product', function () {
++    return this.get('product');
++  })
++});
+Index: app/components/items-list.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/components/items-list.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/components/items-list.js	(revision )
+@@ -1,4 +1,5 @@
+ import Ember from 'ember';
+ 
+ export default Ember.Component.extend({
++
+ });
+Index: app/templates/components/items-list.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/components/items-list.hbs	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/templates/components/items-list.hbs	(revision )
+@@ -1,6 +1,6 @@
+ <div class="item-container">
+   <h1>{{title}}</h1>
+   {{#each items as | item |}}
+-    {{item-component item=item image=item.image title=item.title author = item.author type=item.type }}
++    {{item-component item=item image=item.image title=item.title author = item.author type=item.type price=item.price }}
+   {{/each}}
+ </div>
+\ No newline at end of file
+Index: app/routes/production.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/routes/production.js	(revision )
++++ app/routes/production.js	(revision )
+@@ -0,0 +1,7 @@
++import Ember from 'ember';
++
++export default Ember.Route.extend({
++  model() {
++    return this.get('store').findAll('production');
++  }
++});
+Index: tests/unit/routes/production-test.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tests/unit/routes/production-test.js	(revision )
++++ tests/unit/routes/production-test.js	(revision )
+@@ -0,0 +1,11 @@
++import { moduleFor, test } from 'ember-qunit';
++
++moduleFor('route:production', 'Unit | Route | production', {
++  // Specify the other units that are required for this test.
++  // needs: ['controller:foo']
++});
++
++test('it exists', function(assert) {
++  let route = this.subject();
++  assert.ok(route);
++});
+Index: app/components/list-filter.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/components/list-filter.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/components/list-filter.js	(revision )
+@@ -3,6 +3,7 @@
+ export default Ember.Component.extend({
+   classNames: ['list-filter'],
+   value: '',
++  filter: null,
+ 
+   init(){
+     this._super(...arguments);
+Index: app/templates/production.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/production.hbs	(revision )
++++ app/templates/production.hbs	(revision )
+@@ -0,0 +1,1 @@
++{{table-production products=model}}
+\ No newline at end of file
+Index: public/data/product.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- public/data/product.json	(revision )
++++ public/data/product.json	(revision )
+@@ -0,0 +1,30 @@
++[{
++  "id": "prod1",
++  "productName": "Books",
++  "price": 20
++},
++  {
++   "id": "prod2",
++    "productName": "Movies",
++    "price": 20
++  },
++  {
++    "id": "prod3",
++    "productName": "Cookies",
++    "price": 20
++  },
++  {
++    "id": "prod4",
++    "productName": "Dresses",
++    "price": 20
++  },
++  {
++    "id": "prod5",
++    "productName": "Books",
++    "price": 20
++  },
++  {
++    "id": "prod6",
++    "productName": "Books",
++    "price": 20
++  }]
+Index: app/controllers/movie.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/controllers/movie.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/controllers/movie.js	(revision )
+@@ -1,5 +1,7 @@
+ import Ember from "ember";
+ 
+ export default Ember.Controller.extend({
+-  title: "List of movies"
++  title: "List of movies",
++  item: null,
++
+ })
+Index: mirage/config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- mirage/config.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ mirage/config.js	(revision )
+@@ -8,7 +8,8 @@
+       title: 'Eat Pray Love',
+       author: 'Elizabeth Gilbert',
+       image: 'assets/images/Eat,_Pray,_Love_–_Elizabeth_Gilbert,_2007.jpg',
+-      type: 'Romance'
++      type: 'Romance',
++      price: 20
+     }
+   }, {
+     type: 'books',
+@@ -17,7 +18,8 @@
+       title: 'Puterea magica a gandului',
+       author: 'David J. Schwartz',
+       image: 'assets/images/puterea-magica-a-gandului.jpg',
+-      type: 'Psychology'
++      type: 'Psychology',
++      price: 25
+     }
+   }, {
+     type: 'books',
+@@ -26,21 +28,27 @@
+       title: 'Unsprezece Minute',
+       author: 'Paulo Coelho',
+       image: 'assets/images/Unsprezece-minute-de-Paulo-Coelho.jpg',
+-      type: 'Romance'
++      type: 'Romance',
++      price: 35
+     }
+   }];
+ 
+   this.get('/books', function (db, request) {
+-    if(request.queryParams.title !== undefined){
+-      let filteredResults = books.filter(function(i) {
+-        return i.attributes.title.toLowerCase().indexOf(request.queryParams.title.toLowerCase())!== -1;
++    if (request.queryParams.title !== undefined) {
++      let filteredResults = books.filter(function (i) {
++        return i.attributes.title.toLowerCase().indexOf(request.queryParams.title.toLowerCase()) !== -1;
+       });
+       return {data: filteredResults};
+-    } else{
++    } else {
+       return {data: books}
+     }
+   });
+ 
++
++  this.get('/books/:id', function (db, request) {
++    return { data: books.find((book) => request.params.id === book.id) };
++  });
++
+   this.get('/movies', function () {
+     return {
+       data: [{
+@@ -78,4 +86,47 @@
+       }]
+     }
+   });
++
++  this.get('/productions', function () {
++    return {
++      data: [{
++        id: "prod1",
++        type: "production",
++        attributes: {
++          name: "Books",
++          description:"This is the books description",
++          price: 20
++        }
++      },
++        {
++          id: "prod2",
++          type: "production",
++          attributes: {
++            name: "Movies",
++            price: 30,
++            description:"sdfafsfga"
++          }
++        },
++        {
++          id: "prod3",
++          type: "production",
++          attributes: {
++            name: "Cookies",
++            price: 25,
++            description:"sfsdfasgageth"
++          }
++        },
++        {
++          id: "prod4",
++          type: "production",
++          attributes: {
++            name: "Dresses",
++            price: 25,
++            description: "sfgrth rget "
++          }
++        }]
++    }
++
++  });
++
+ }
+Index: app/templates/components/table-production.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/components/table-production.hbs	(revision )
++++ app/templates/components/table-production.hbs	(revision )
+@@ -0,0 +1,12 @@
++<tr>
++  <th>Product Name</th>
++  <th>Description</th>
++  <th>Price</th>
++</tr>
++{{#each products as |product|}}
++  <tr>
++    <td>{{product.name}}</td>
++    <td>{{product.description}}</td>
++    <td>{{product.price}} $</td>
++  </tr>
++{{/each}}
+\ No newline at end of file
+Index: app/controllers/book.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/controllers/book.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/controllers/book.js	(revision )
+@@ -1,12 +1,18 @@
+ import Ember from 'ember';
+ 
+ export default Ember.Controller.extend({
++
++  setItems: function () {
++    // this.set("items", item);
++  }.observes('item').on('init'),
++
+   actions: {
+     filterByTitle(param) {
+       if(param !==''){
+-        return this.get('store').query('book', {title: param}).then((results)=>{
++       this.get('store').query('book', {title: param}).then((results)=>{
+           return {query: param, results: results};
+         });
++        // this.set('item')
+       }else {
+         return this.get('store').findAll('book').then((results)=> {
+           return {query:param, results: results};
+@@ -14,5 +20,5 @@
+       }
+     }
+   },
+-  title: "List of books"
++  title: "List of books",
+ });
+Index: app/router.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/router.js	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/router.js	(revision )
+@@ -8,11 +8,12 @@
+ 
+ Router.map(function() {
+   this.route('book', function () {
+-    this.route('edit', {path: 'edit/:book_id'})
++    this.route('edit', {path: '/:id'})
+   });
+   this.route('movie',{path:'/movie'});
+   this.route('about');
+   this.route('contact');
++  this.route('production');
+ });
+ 
+ export default Router;
+Index: app/templates/book.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/templates/book.hbs	(revision 13fff6cdcce3e4c59c3b13dfd7984d09e76f6791)
++++ app/templates/book.hbs	(revision )
+@@ -2,4 +2,5 @@
+   <div class="results">
+     {{items-list title = title items = model}}
+   </div>
+-{{/list-filter}}
+\ No newline at end of file
++{{/list-filter}}
++{{outlet}}
+\ No newline at end of file
+Index: tests/integration/components/table-production-test.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tests/integration/components/table-production-test.js	(revision )
++++ tests/integration/components/table-production-test.js	(revision )
+@@ -0,0 +1,24 @@
++import { moduleForComponent, test } from 'ember-qunit';
++import hbs from 'htmlbars-inline-precompile';
++
++moduleForComponent('table-production', 'Integration | Component | table production', {
++  integration: true
++});
++
++test('it renders', function(assert) {
++  // Set any properties with this.set('myProperty', 'value');
++  // Handle any actions with this.on('myAction', function(val) { ... });
++
++  this.render(hbs`{{table-production}}`);
++
++  assert.equal(this.$().text().trim(), '');
++
++  // Template block usage:
++  this.render(hbs`
++    {{#table-production}}
++      template block text
++    {{/table-production}}
++  `);
++
++  assert.equal(this.$().text().trim(), 'template block text');
++});

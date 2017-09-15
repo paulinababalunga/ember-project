@@ -1,0 +1,12 @@
+<tr>
+  {{table-th name="Product Name" current_sort=sort_by sort_by="default" sort_data=(action 'sort_data')}}
+  {{table-th name="Description" current_sort=sort_by sort_by="description" sort_data=(action 'sort_data')}}
+  {{table-th name="Price" current_sort=sort_by sort_by="price" sort_data=(action 'sort_data')}}
+</tr>
+{{#each sortedModel as |product|}}
+  <tr>
+    <td >{{product.name}}</td>
+    <td >{{product.description}}</td>
+    <td >{{product.price}} $</td>
+  </tr>
+{{/each}}

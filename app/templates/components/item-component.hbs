@@ -5,11 +5,13 @@
   <div class="detail-section">
     <h4 class="detail-title" {{action "showItems" title}}>Title: {{title}}</h4>
     <div class="detail-author {{authorVisibility}}"><strong>Author: </strong>{{author}}</div>
+    <div class="detail-price {{priceVisibility}}"><strong>Price: </strong>{{price}}$</div>
     <div><strong>Type:</strong> {{item-property-type type}} - {{type}}</div>
     {{input type="text" value = title key-up=(action 'updateTitle') }}
-  </div>{{ item.id}}
+  </div>
   {{button-with-confirmation text="Click ok to delete an item" onConfirm=(action "deleteBookItem" item)}}
   <div class="">
-    <button>{{#link-to 'book.edit' item.id}}Edit {{title}}{{/link-to}}</button>
+    <button>{{#link-to 'book.edit' item.id}}Edit Item {{/link-to}}</button>
+    <button>{{#link-to 'about'}}Go to About Page {{/link-to}}</button>
   </div>
 </article>

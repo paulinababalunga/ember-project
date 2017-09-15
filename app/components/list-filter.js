@@ -3,6 +3,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNames: ['list-filter'],
   value: '',
+  filter: null,
 
   init(){
     this._super(...arguments);

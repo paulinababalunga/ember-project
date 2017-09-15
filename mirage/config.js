@@ -8,7 +8,8 @@ export default function () {
       title: 'Eat Pray Love',
       author: 'Elizabeth Gilbert',
       image: 'assets/images/Eat,_Pray,_Love_–_Elizabeth_Gilbert,_2007.jpg',
-      type: 'Romance'
+      type: 'Romance',
+      price: 20
     }
   }, {
     type: 'books',
@@ -17,7 +18,8 @@ export default function () {
       title: 'Puterea magica a gandului',
       author: 'David J. Schwartz',
       image: 'assets/images/puterea-magica-a-gandului.jpg',
-      type: 'Psychology'
+      type: 'Psychology',
+      price: 25
     }
   }, {
     type: 'books',
@@ -26,19 +28,25 @@ export default function () {
       title: 'Unsprezece Minute',
       author: 'Paulo Coelho',
       image: 'assets/images/Unsprezece-minute-de-Paulo-Coelho.jpg',
-      type: 'Romance'
+      type: 'Romance',
+      price: 35
     }
   }];
 
   this.get('/books', function (db, request) {
-    if(request.queryParams.title !== undefined){
-      let filteredResults = books.filter(function(i) {
-        return i.attributes.title.toLowerCase().indexOf(request.queryParams.title.toLowerCase())!== -1;
+    if (request.queryParams.title !== undefined) {
+      let filteredResults = books.filter(function (i) {
+        return i.attributes.title.toLowerCase().indexOf(request.queryParams.title.toLowerCase()) !== -1;
       });
       return {data: filteredResults};
-    } else{
+    } else {
       return {data: books}
     }
+  });
+
+
+  this.get('/books/:id', function (db, request) {
+    return { data: books.find((book) => request.params.id === book.id) };
   });
 
   this.get('/movies', function () {
@@ -78,4 +86,47 @@ export default function () {
       }]
     }
   });
+
+  this.get('/productions', function () {
+    return {
+      data: [{
+        id: "prod1",
+        type: "production",
+        attributes: {
+          name: "Books",
+          description:"This is the books description",
+          price: 20
+        }
+      },
+        {
+          id: "prod2",
+          type: "production",
+          attributes: {
+            name: "Movies",
+            price: 30,
+            description:"sdfafsfga"
+          }
+        },
+        {
+          id: "prod3",
+          type: "production",
+          attributes: {
+            name: "Cookies",
+            price: 25,
+            description:"sfsdfasgageth"
+          }
+        },
+        {
+          id: "prod4",
+          type: "production",
+          attributes: {
+            name: "Dresses",
+            price: 25,
+            description: "sfgrth rget "
+          }
+        }]
+    }
+
+  });
+
 }
